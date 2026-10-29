@@ -28,6 +28,8 @@
 ## Roadmap
 - [ ] Rules F2, F5, F10 first (data already available)
 - [ ] F1/F3/F4 once the boiler clamp and NTCs are commissioned
+- [ ] F15/F16 once the opto inputs are installed (cylinder stat / cut-out and timer watchdogs)
+- [ ] F13 validated against the boiler fault history and overrun data
 - [ ] Validation against history
 - [ ] FDD summary dashboard
 

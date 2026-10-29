@@ -1,1 +1,4 @@
 rule,period,true_positives,false_positives,threshold,persistence,notes
+F13,,,,,,awaiting boiler fault history (L1) and overrun flow-temperature data
+F15,,,,,,needs opto inputs IN3/IN4 + RAMSES relay states
+F16,,,,,,needs opto input IN2 + RAMSES DHW demand
