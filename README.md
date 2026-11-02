@@ -17,6 +17,66 @@
 
 ---
 
+## Status at a glance
+
+| Item | Status |
+|---|---|
+| Rule catalogue F1-F16 (logic, persistence, cause, action) | ✅ Written ([doc 01](docs/01-rules.md)) |
+| Implementation approach (HA templates / Node-RED, alarm routing) | 📐 Designed ([doc 02](docs/02-implementation.md)) |
+| **F1 short-cycling: confirmed on real data** (4-8 min cycles at low load) | ✅ Evidence recorded ([doc 03](docs/03-validation.md)) |
+| F5 pressure-decay baseline (top-up about every two weeks) | ✅ Recorded |
+| F13, F15, F16 from the junction box survey | ✅ Written; need opto inputs to run |
+| Rules running live and validated (true/false positives) | ⏳ As inputs come online |
+
+## Why FDD, not just alarms
+
+An alarm says *something is wrong*; a fault-detection rule says *what is probably wrong and what to do*. Each rule here has a condition, a persistence time (so transients don't trigger it), a probable cause and an action, the way commercial FDD tools work. They're written against real plant: a system boiler, two unvented cylinders, five zone valves, two Evohome controllers and a monitoring layer that is being built point by point.
+
+## Inputs → rules → actions
+
+```mermaid
+flowchart LR
+    PM["Plant monitoring<br/>flow / return · pressure ·<br/>boiler current · opto demands"] --> R["FDD rules<br/>F1-F16"]
+    RA["RAMSES-II<br/>zone temps · relay states"] --> R
+    WM["Water metering"] --> R
+    OT["OpenTherm (later)"] -.-> R
+    R --> AR["Alarm register<br/>P3 / P4"]
+    R --> DG["Diagnosis + action<br/>on the dashboard"]
+```
+
+## The rules at a glance
+
+| # | Fault | Needs | Status |
+|---|---|---|---|
+| F1 | Short-cycling | Flow/return (or current) + demand | **Evidence on real data** |
+| F2 | Firing without demand | Current + opto demand | Waits for clamp + opto |
+| F3 | Low ΔT | Flow/return + firing | Inputs live |
+| F4 | High return (not condensing) | Return temperature | Inputs live; returns > 55 °C seen late in long runs |
+| F5 | Pressure decay | Pressure | Baseline recorded |
+| F6 | Sensor disagreement | NTC + OpenTherm | Waits for OpenTherm |
+| F7 | Stuck zone | RAMSES-II | Inputs live |
+| F8 | Comfort complaint | RAMSES-II | Inputs live |
+| F9 | DHW priority overrun | RAMSES-II | Inputs live |
+| F10 | Stale sensor | Any | Inputs live |
+| F11 | Simultaneous heating and cooling | RAMSES-II + aircon | Inputs live |
+| F12 | Outdoor sensor disagreement | Weather station + online | Inputs live |
+| F13 | Overrun with no flow path (no bypass) | Flow temp + switched live | Bypass required regardless |
+| F14 | Restricted radiator circuit | ΔT + zones | Inputs live |
+| F15 | Cylinder relay calling, stat not passing | Opto + RAMSES-II | Waits for opto |
+| F16 | Hot water disabled by the timer | Opto + RAMSES-II | Waits for opto |
+
+Full logic, persistence, causes and actions: [doc 01](docs/01-rules.md).
+
+## First real evidence: F1 short-cycling
+
+With filtered flow and return temperatures, the cycles are unmistakable: at **low heating load** (early morning and the start of the evening period) the boiler fires every **4-8 minutes**, above the rule's threshold of 6 firings an hour. When more zones call later in the evening, burns lengthen and the flow holds at 65-72 °C. The likely cause is load below the boiler's minimum output; RAMSES-II relay states will separate the boiler cycling on its own thermostat from several relays switching it in turn ([validation](docs/03-validation.md)).
+
+**Actions under consideration:** lower the boiler's flow temperature (fewer cycles at low load, more condensing), then weather compensation and anti-cycling in the [OpenTherm design](https://github.com/the-control-cabinet/opentherm-boiler-control-esphome) (clauses 3.3 and 3.6 of the [sequence of operation](https://github.com/the-control-cabinet/heating-sequence-of-operation)).
+
+## How rules are validated
+
+Each rule is run against history and scored on **true and false positives** before it's allowed to raise an alarm ([data/rule-validation.csv](data/rule-validation.csv)). A rule that can't be validated yet stays in "observed" status.
+
 ## Documents
 
 | Doc | Contents |
