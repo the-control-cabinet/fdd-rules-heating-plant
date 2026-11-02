@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.3.0] - 2026-11-02
+- F1 short-cycling confirmed from filtered flow/return data (4-8 min cycles at low load); validation row and the two mechanisms to separate with RAMSES relay states; overrun observations noted against F13.
+
 ## [0.2.1] - 2026-10-31
 - F5: heat-up pressure rise signature and the known leak baseline (fault history F1 ×2).
 
