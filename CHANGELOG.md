@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.4.0] - 2026-11-11
+- Rules F17-F20: low flow / no bypass, cylinder not warming while called (data-only F15), inlet overpressure on reheat, implausible sensor; November evidence for F1/F17 and an F18 candidate.
+
 ## [0.3.1] - 2026-11-03
 - README expanded: status, why FDD, input-rule-action diagram, rule status table F1-F16, first F1 evidence and actions, validation method.
 
