@@ -5,7 +5,7 @@
 [![YouTube](https://img.shields.io/badge/YouTube-The%20Control%20Cabinet-red?logo=youtube)](https://www.youtube.com/channel/UC5Cupmz7vlfcodpCX7k8iuQ)
 [![Portfolio](https://img.shields.io/badge/Portfolio-the--control--cabinet-24292f?logo=github)](https://github.com/the-control-cabinet/the-control-cabinet)
 ![Domain](https://img.shields.io/badge/BMS-FDD%20analytics-blue)
-![Status](https://img.shields.io/badge/Status-Design%20stage-yellow)
+![Status](https://img.shields.io/badge/Status-First%20rules%20live-yellowgreen)
 
 > **The short version:**
 > - **Inputs:** plant monitoring (flow/return, pressure, current-based boiler states, demands), RAMSES-II zones, water metering, later OpenTherm data.
@@ -74,6 +74,12 @@ With filtered flow and return temperatures, the cycles are unmistakable: at **lo
 
 **Actions under consideration:** lower the boiler's flow temperature (fewer cycles at low load, more condensing), then weather compensation and anti-cycling in the [OpenTherm design](https://github.com/the-control-cabinet/opentherm-boiler-control-esphome) (clauses 3.3 and 3.6 of the [sequence of operation](https://github.com/the-control-cabinet/heating-sequence-of-operation)).
 
+## Rules running live (11 Nov 2026)
+
+The first rules run as Home Assistant automations in the plant monitoring [alerts package](https://github.com/the-control-cabinet/heating-plant-monitoring-esphome/blob/main/docs/15-alerts.md): F1/F17 (> 6 starts an hour), F7 (zone at full demand but > 1 °C short for 2 h), F9 (a reheat over 90 min), F10 (board offline), F18 (hot water calling, boiler not firing), F19 (inlet > 4.5 bar) and F20 (implausible probe or pin). F2, F5, F15 and F16 are written but **gated** until their inputs are commissioned, so they can't raise false alarms.
+
+**First lessons:** choose the input that really means "calling" (for the RAMSES hot water zones, `heat_demand`, not `relay_demand`, which gave false alerts); and check an alert against a sensor that reflects the condition, not one that lags (an outlet NTC at rest).
+
 ## How rules are validated
 
 Each rule is run against history and scored on **true and false positives** before it's allowed to raise an alarm ([data/rule-validation.csv](data/rule-validation.csv)). A rule that can't be validated yet stays in "observed" status.
@@ -87,9 +93,9 @@ Each rule is run against history and scored on **true and false positives** befo
 | [03 Validation](docs/03-validation.md) | Testing rules against history |
 
 ## Roadmap
-- [ ] Rules F2, F5, F10 first (data already available)
-- [ ] F1/F3/F4 once the boiler clamp and NTCs are commissioned
-- [ ] F15/F16 once the opto inputs are installed (cylinder stat / cut-out and timer watchdogs)
+- [x] First rules live as HA alerts: F1/F17, F7, F9, F10, F18, F19, F20 (11 Nov) ([doc 02](docs/02-implementation.md#live-alerts-11-nov-2026))
+- [ ] F2, F15, F16 once the opto board's mains side is live (written, gated); F5 once the boiler gauge box is built (written, gated)
+- [ ] F3/F4 as alerts (inputs live)
 - [ ] F13 validated against the boiler fault history and overrun data
 - [ ] Validation against history
 - [ ] FDD summary dashboard
@@ -99,7 +105,7 @@ Each rule is run against history and scored on **true and false positives** befo
 |---|---|
 | FDD | Rule catalogue with cause and action |
 | Data analysis | Persistence, thresholds, validation against history |
-| Integration with alarms | Severity-mapped outputs |
+| Integration with alarms | Severity-mapped outputs; rules running live with commissioning gates |
 | Plant knowledge | Rules reflect boiler, hydronic and zone behaviour |
 
 📺 [The Control Cabinet on YouTube](https://www.youtube.com/channel/UC5Cupmz7vlfcodpCX7k8iuQ)
