@@ -21,12 +21,12 @@
 
 | Item | Status |
 |---|---|
-| Rule catalogue F1-F16 (logic, persistence, cause, action) | ✅ Written ([doc 01](docs/01-rules.md)) |
+| Rule catalogue F1-F20 (logic, persistence, cause, action) | ✅ Written ([doc 01](docs/01-rules.md)) |
 | Implementation approach (HA templates / Node-RED, alarm routing) | 📐 Designed ([doc 02](docs/02-implementation.md)) |
 | **F1 short-cycling: confirmed on real data** (4-8 min cycles at low load) | ✅ Evidence recorded ([doc 03](docs/03-validation.md)) |
 | F5 pressure-decay baseline (top-up about every two weeks) | ✅ Recorded |
 | F13, F15, F16 from the junction box survey | ✅ Written; need opto inputs to run |
-| Rules running live and validated (true/false positives) | ⏳ As inputs come online |
+| **Rules running live as HA alerts** (F1/F17, F5, F7, F9, F10, F18, F19, F20 now; F2, F15, F16 gated until the opto board's mains side) | ✅ Live 11 Nov ([doc 02](docs/02-implementation.md#live-alerts-11-nov-2026)) · ⏳ true/false-positive log |
 
 ## Why FDD, not just alarms
 
@@ -54,16 +54,17 @@ flowchart LR
 | F4 | High return (not condensing) | Return temperature | Inputs live; returns > 55 °C seen late in long runs |
 | F5 | Pressure decay | Pressure | Baseline recorded |
 | F6 | Sensor disagreement | NTC + OpenTherm | Waits for OpenTherm |
-| F7 | Stuck zone | RAMSES-II | Inputs live |
+| F7 | Stuck zone | RAMSES-II | **Live alert** (2 h at ≥ 95% demand, > 1 °C short) |
 | F8 | Comfort complaint | RAMSES-II | Inputs live |
-| F9 | DHW priority overrun | RAMSES-II | Inputs live |
-| F10 | Stale sensor | Any | Inputs live |
+| F9 | DHW priority overrun | RAMSES-II | **Live alert** (90 min, on heat demand) |
+| F10 | Stale sensor | Any | **Live** for the control-room board (offline 5 min) |
 | F11 | Simultaneous heating and cooling | RAMSES-II + aircon | Inputs live |
 | F12 | Outdoor sensor disagreement | Weather station + online | Inputs live |
 | F13 | Overrun with no flow path (no bypass) | Flow temp + switched live | Bypass required regardless |
 | F14 | Restricted radiator circuit | ΔT + zones | Inputs live |
-| F15 | Cylinder relay calling, stat not passing | Opto + RAMSES-II | Waits for opto |
-| F16 | Hot water disabled by the timer | Opto + RAMSES-II | Waits for opto |
+| F15 | Cylinder relay calling, stat not passing | Opto + RAMSES-II | Alert written, gated until opto |
+| F16 | Hot water disabled by the timer | Opto + RAMSES-II | Alert written, gated until opto |
+| F17-F20 | Low flow, cylinder not warming, inlet overpressure, implausible sensor | Plant monitoring | **Live alerts** (F18 on heat demand) |
 
 Full logic, persistence, causes and actions: [doc 01](docs/01-rules.md).
 

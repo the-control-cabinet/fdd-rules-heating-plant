@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.5.0] - 2026-11-11 (evening)
+- First rules live as HA alerts (F1/F17, F7, F9, F10, F18, F19, F20), F2/F5/F15/F16 written and gated until their inputs are commissioned; doc 02 mapping and the heat-demand vs relay-demand lesson; F18/F19 wording; README status.
+
 ## [0.4.0] - 2026-11-11
 - Rules F17-F20: low flow / no bypass, cylinder not warming while called (data-only F15), inlet overpressure on reheat, implausible sensor; November evidence for F1/F17 and an F18 candidate.
 
